@@ -14,7 +14,7 @@ export default function Home() {
         </h1>
         <p className={subtitle({ class: "mt-6 max-w-lg mx-auto" })}>
           A secure task management system with AI-powered meeting notes
-          extraction. Built for developers who ship.
+          extraction.
         </p>
       </div>
 
