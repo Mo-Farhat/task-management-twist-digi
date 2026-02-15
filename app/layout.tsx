@@ -48,7 +48,7 @@ export default function RootLayout({
             </main>
             <footer className="w-full flex items-center justify-center py-3">
               <p className="text-default-400 text-sm">
-                © {new Date().getFullYear()} TaskFlow — Secure Task Management
+                © {new Date().getFullYear()} Task Management — Secure Task Management
               </p>
             </footer>
           </div>

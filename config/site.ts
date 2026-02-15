@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "TaskFlow",
+  name: "Task Management",
   description: "Secure Task Management System — Manage your tasks with confidence.",
   navItems: [
     {
