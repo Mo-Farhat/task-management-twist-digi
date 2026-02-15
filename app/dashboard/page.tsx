@@ -453,6 +453,10 @@ export default function DashboardPage() {
               value={formData.dueDate}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, dueDate: val }))}
               id="task-due-date"
+              classNames={{
+                input: `${!formData.dueDate ? "[&:not(:focus)]:opacity-0" : ""}`,
+                innerWrapper: "pb-0",
+              }}
             />
           </ModalBody>
           <ModalFooter>
