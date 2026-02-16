@@ -223,7 +223,7 @@ NEXT_PUBLIC_APP_URL   # Application URL (for CORS, redirects)
 
 ## 6. Deployment Notes
 
-- **Runtime**: Node.js (not Edge) — required for bcrypt compatibility.
+- **Runtime**: Node.js - required for bcrypt compatibility.
 - **Build command**: `npx prisma generate && next build` — generates the Prisma client before building.
-- **Rate limiting caveat**: In-memory state resets per cold start. Acceptable for this scale; upgrade to Upstash Redis for production.
+- **Rate limiting**: In-memory state resets per cold start. Acceptable for this scale; upgrade to Upstash Redis for production.
 - **Prisma driver**: Uses `@prisma/adapter-pg` (JavaScript-based) instead of the default Rust query engine, which isn't compatible with Vercel's serverless environment.
