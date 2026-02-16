@@ -1,5 +1,7 @@
 # TaskFlow — Architecture & Security Plan
 
+TaskFlow is a secure full-stack task management application built with Next.js 15, Prisma 7, and NeonDB, featuring JWT authentication, task CRUD, and AI-powered meeting action item extraction. The architecture prioritises security, serverless compatibility, and a streamlined deployment pipeline on Vercel.
+
 ## 1. Backend Choice Justification
 
 ### Why Next.js API Routes (Serverless) Over a Dedicated Backend
@@ -82,13 +84,15 @@ This is a **full-stack task management application** built with Next.js 15 and d
     └─────────┘     └───────────┘    └─────────────┘
 ```
 
+> **Runtime note:** Node.js runtime is used instead of Edge runtime due to bcrypt and Prisma compatibility — neither library supports the Edge runtime's restricted API surface.
+
 ### Core Features
 
 **Authentication** — Full register/login flow with bcrypt password hashing and JWT-based sessions. Tokens are stored in HttpOnly cookies (never exposed to client-side JavaScript). A Next.js middleware layer intercepts every request to validate the access token, attempt a silent refresh if expired, or redirect to login if invalid.
 
 **Task CRUD** — Authenticated users can create, read, update, and delete tasks. Each task has a title, optional description, status (TODO / IN_PROGRESS / DONE), priority (LOW / MEDIUM / HIGH / URGENT), and optional due date. Task listing supports filtering by status/priority and sorting by multiple fields. All operations enforce ownership — a user can only access their own tasks.
 
-**AI Meeting Notes Extraction** — The novelty feature. A user can paste a meeting transcript and optionally specify a name to extract action items for. If no name is provided, the app defaults to the logged-in user's account name. The transcript is sent to the Groq API (Llama 3.3 70B) which scans it for action items relevant to the specified person — tasks assigned directly to them, or tasks assigned to "the team" / "everyone." The extracted items are returned for the user to review, edit, and then confirm as actual tasks in bulk.
+**AI Meeting Notes Extraction (Novelty Feature)** — The transcript extraction module serves as the novelty feature beyond standard CRUD requirements. A user can paste a meeting transcript and optionally specify a name to extract action items for. If no name is provided, the app defaults to the logged-in user's account name. The transcript is sent to the Groq API (Llama 3.3 70B) which scans it for action items relevant to the specified person — tasks assigned directly to them, or tasks assigned to "the team" / "everyone." The extracted items are returned for the user to review, edit, and then confirm as actual tasks in bulk.
 
 ### API Endpoints
 
@@ -223,7 +227,7 @@ NEXT_PUBLIC_APP_URL   # Application URL (for CORS, redirects)
 
 ## 6. Deployment Notes
 
-- **Runtime**: Node.js - required for bcrypt compatibility.
+- **Runtime**: Node.js (not Edge) — bcrypt and Prisma are incompatible with the Edge runtime's restricted API surface.
 - **Build command**: `npx prisma generate && next build` — generates the Prisma client before building.
 - **Rate limiting**: In-memory state resets per cold start. Acceptable for this scale; upgrade to Upstash Redis for production.
 - **Prisma driver**: Uses `@prisma/adapter-pg` (JavaScript-based) instead of the default Rust query engine, which isn't compatible with Vercel's serverless environment.

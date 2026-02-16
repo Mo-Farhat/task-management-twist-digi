@@ -1,13 +1,25 @@
 # TaskFlow — Secure Task Management System
 
-A full-stack, secure task management system built with **Next.js 14**, **Prisma 7**, **NeonDB (PostgreSQL)**, and **HeroUI v2**. Includes AI-powered meeting transcript analysis via **Groq API** to extract action items and convert them into tasks.
+A full-stack, secure task management system built with **Next.js 15**, **Prisma 7**, **NeonDB (PostgreSQL)**, and **HeroUI v2**. Includes AI-powered meeting transcript analysis via **Groq API** to extract action items and convert them into tasks.
+
+> See [PLAN.md](PLAN.md) for detailed architecture and security reasoning.
+
+## 🌐 Live Demo
+
+**App**: [task-management-mofarhat.vercel.app](https://task-management-mofarhat.vercel.app)
+
+### Screenshots
+
+| Landing Page                               | Login                                  |
+| ------------------------------------------ | -------------------------------------- |
+| ![Landing](public/screenshots-landing.png) | ![Login](public/screenshots-login.png) |
 
 ## ✨ Features
 
 ### 🔐 Authentication & Security
 
 - **JWT Authentication** with HttpOnly cookies (access + refresh tokens)
-- **bcrypt** password hashing (10 salt rounds)
+- **bcrypt** password hashing (12 salt rounds)
 - **Token rotation** — refresh tokens are rotated on every use
 - **Rate limiting** on all API endpoints (auth: 5/min, API: 60/min, AI: 10/min)
 - **Zod validation** on all inputs
@@ -26,7 +38,8 @@ A full-stack, secure task management system built with **Next.js 14**, **Prisma 
 ### 🤖 AI Meeting Notes (Groq)
 
 - Paste meeting transcripts and let **Llama 3.3 70B** extract action items
-- AI identifies tasks assigned to you, suggests priorities and due dates
+- **Optional name input** — specify whose action items to extract, or leave empty to default to your account name
+- AI identifies tasks assigned to the specified person, suggests priorities and due dates
 - Review, edit, toggle, and bulk-create tasks from extracted items
 - Transcript summaries saved for reference
 
@@ -34,7 +47,7 @@ A full-stack, secure task management system built with **Next.js 14**, **Prisma 
 
 | Layer      | Technology                           |
 | ---------- | ------------------------------------ |
-| Framework  | Next.js 14 (App Router)              |
+| Framework  | Next.js 15 (App Router)              |
 | UI         | HeroUI v2, Tailwind CSS              |
 | Database   | NeonDB (PostgreSQL)                  |
 | ORM        | Prisma 7 (pg driver adapter)         |
@@ -103,7 +116,7 @@ Visit `http://localhost:3000` to get started.
 │   ├── prisma.ts          # Database client (pg adapter)
 │   ├── validations.ts     # Zod schemas
 │   ├── rate-limit.ts      # In-memory rate limiter
-│   ├── groq.ts            # Groq API client
+│   ├── llm.ts             # Groq API client
 │   └── api-utils.ts       # Response helpers
 ├── prisma/
 │   └── schema.prisma      # Database schema
@@ -114,7 +127,7 @@ Visit `http://localhost:3000` to get started.
 ## 🔒 Security Architecture
 
 - **Authentication**: Stateless JWT with HttpOnly, Secure, SameSite=Lax cookies
-- **Password**: bcrypt hashing with 10 salt rounds
+- **Password**: bcrypt hashing with 12 salt rounds
 - **Token Refresh**: Tokens stored as bcrypt hashes in DB; full rotation on refresh
 - **Rate Limiting**: Sliding window, in-memory (use Redis for multi-instance)
 - **Input Validation**: Zod schemas on all API inputs
@@ -138,6 +151,24 @@ Visit `http://localhost:3000` to get started.
 | POST   | /api/meetings/confirm | Bulk-create tasks       | Yes  |
 
 \* Uses refresh token cookie
+
+## 📝 Development Notes
+
+- Conventional commits used throughout development
+- Clear, atomic commit history maintained
+- All environment variables documented in `.env.example`
+
+## 📈 Scaling Considerations
+
+The current architecture is optimised for a demo/portfolio scale. For production at scale, the following upgrades are recommended:
+
+| Area              | Current                          | Production Upgrade                         |
+| ----------------- | -------------------------------- | ------------------------------------------ |
+| **Rate Limiting** | In-memory (resets on cold start) | Redis-backed via Upstash                   |
+| **AI Processing** | Synchronous in API route         | Background job queue (e.g., BullMQ)        |
+| **Caching**       | None                             | Edge caching for task lists, SWR on client |
+| **Database**      | Single NeonDB instance           | Read replicas + connection pooling         |
+| **Monitoring**    | Console logging                  | Structured logging + Sentry error tracking |
 
 ## 📜 License
 
