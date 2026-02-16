@@ -152,6 +152,23 @@ Visit `http://localhost:3000` to get started.
 
 \* Uses refresh token cookie
 
+## 🧪 Testing
+
+Unit tests are written with **Vitest** and cover input validation schemas and rate limiting logic.
+
+```bash
+# Run all tests
+npm test
+
+# Run in watch mode
+npm run test:watch
+```
+
+| Test Suite            | Cases | What's Covered                                                                                              |
+| --------------------- | ----- | ----------------------------------------------------------------------------------------------------------- |
+| `validations.test.ts` | 37    | All 6 Zod schemas — valid/invalid inputs, boundary lengths, enum validation, format normalization, defaults |
+| `rate-limit.test.ts`  | 9     | Request counting, over-limit blocking, window expiry reset, independent client tracking, preset configs     |
+
 ## 📝 Development Notes
 
 - Conventional commits used throughout development
