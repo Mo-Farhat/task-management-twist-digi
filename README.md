@@ -155,7 +155,7 @@ Visit `http://localhost:3000` to get started.
 ## 📝 Development Notes
 
 - Conventional commits used throughout development
-- Clear, atomic commit history maintained
+- Clear commit history maintained
 - All environment variables documented in `.env.example`
 
 ## 📈 Scaling Considerations
