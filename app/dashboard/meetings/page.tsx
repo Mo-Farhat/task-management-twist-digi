@@ -30,6 +30,7 @@ const PRIORITY_CONFIG = {
 
 export default function MeetingsPage() {
   const [transcript, setTranscript] = useState("");
+  const [extractName, setExtractName] = useState("");
   const [isExtracting, setIsExtracting] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [error, setError] = useState("");
@@ -58,7 +59,10 @@ export default function MeetingsPage() {
       const res = await fetch("/api/meetings/extract", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript: transcript.trim() }),
+        body: JSON.stringify({
+          transcript: transcript.trim(),
+          ...(extractName.trim() && { name: extractName.trim() }),
+        }),
       });
 
       const data = await res.json();
@@ -138,6 +142,7 @@ export default function MeetingsPage() {
 
       setSuccess(`${data.tasks?.length || selectedItems.length} tasks created successfully! View them on the Dashboard.`);
       setTranscript("");
+      setExtractName("");
       setActionItems([]);
       setSummary("");
       setTranscriptId(null);
@@ -151,6 +156,7 @@ export default function MeetingsPage() {
   // Reset
   const handleReset = () => {
     setTranscript("");
+    setExtractName("");
     setActionItems([]);
     setSummary("");
     setTranscriptId(null);
@@ -207,6 +213,19 @@ export default function MeetingsPage() {
               onChange={(e) => setTranscript(e.target.value)}
               id="transcript-input"
             />
+            <div className="mt-4">
+              <Input
+                label="Extract action items for"
+                placeholder="e.g. Sarah, John..."
+                description="Leave empty to use your account name"
+                value={extractName}
+                onValueChange={setExtractName}
+                size="sm"
+                variant="bordered"
+                classNames={{ description: "text-default-400" }}
+                id="extract-name-input"
+              />
+            </div>
             <div className="flex justify-between items-center mt-4">
               <span className="text-xs text-default-400">
                 {transcript.length} / 50,000 characters

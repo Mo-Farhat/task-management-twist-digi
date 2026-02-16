@@ -32,8 +32,9 @@ export async function POST(request: NextRequest) {
       return apiError("Validation failed", 400, errors);
     }
 
-    // Call Groq API
-    const analysis = await extractActionItems(parsed.data.transcript, user.name);
+    // Call Groq API — use provided name or fall back to logged-in user's name
+    const extractionName = parsed.data.name || user.name;
+    const analysis = await extractActionItems(parsed.data.transcript, extractionName);
 
     // Save transcript
     const transcript = await prisma.meetingTranscript.create({

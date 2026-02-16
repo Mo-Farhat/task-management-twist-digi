@@ -87,6 +87,12 @@ export const extractTranscriptSchema = z.object({
     .min(10, "Transcript must be at least 10 characters")
     .max(50000, "Transcript must be at most 50,000 characters")
     .trim(),
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must be at most 100 characters")
+    .trim()
+    .optional(),
 });
 
 export const confirmActionItemsSchema = z.object({
